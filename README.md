@@ -10,3 +10,6 @@ Simple loading client based on RxNetty and supports SSE.
 
 ## For Intellij idea users
 This project need enable Annotation processor cause of lombok dependency
+
+## Help
+just run `java -jar rx-loader-x.x.x.jar` and check the list of options

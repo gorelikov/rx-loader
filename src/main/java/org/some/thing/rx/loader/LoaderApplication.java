@@ -39,7 +39,6 @@ public class LoaderApplication {
     try {
       optionSet = parser.parse(args);
     } catch (OptionException e) {
-      e.printStackTrace();
       ColoredLogger.log(ColoredLogger.RED, e.getMessage());
       parser.printHelpOn(System.out);
       System.exit(1);

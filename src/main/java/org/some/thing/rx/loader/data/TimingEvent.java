@@ -9,6 +9,7 @@ import lombok.Getter;
 public class TimingEvent {
   private Integer id;
   private  Long time;
+  private Throwable exception;
   @Builder.Default
   private boolean failed = false;
   @Builder.Default

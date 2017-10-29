@@ -11,7 +11,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'java'
 
 
-version = '0.0.1'
+version = '0.0.2'
 group = 'org.some.thing.rx.loader'
 sourceCompatibility = 1.8
 

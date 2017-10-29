@@ -33,6 +33,7 @@ public class LoaderApplication {
         .requiredUnless("r").withRequiredArg().ofType(String.class);
     final OptionSpec sslSpec = parser.accepts("k", "ignoreSSL");
     final OptionSpec sseSpec = parser.accepts("sse", "sseEnabled");
+    final OptionSpec debugSpec = parser.accepts("debugEnabled", "debugEnabled");
     parser.formatHelpWith(new ColloredHelpFormatter());
 
     OptionSet optionSet = null;
@@ -48,10 +49,11 @@ public class LoaderApplication {
         .map(res -> res.split(":", 2))
         .collect(Collectors.toMap(res -> res[0], res -> res[1]));
 
-    Loader loader = new Loader(optionSet.valueOf(addressSpec), optionSet.has("k"), headers);
+    Loader loader = new Loader(optionSet.valueOf(addressSpec), optionSet.has(sslSpec),
+            headers, optionSet.has(debugSpec), optionSet.has(sseSpec));
+
     loader.run(optionSet.valueOf(threadSpec), optionSet.valueOf(connectionsSpec),
-        optionSet.valueOf(maxRequestSpec), Duration.parse("PT"+optionSet.valueOf(durationSpec).toUpperCase()),
-        optionSet.has(sseSpec));
+        optionSet.valueOf(maxRequestSpec), Duration.parse("PT"+optionSet.valueOf(durationSpec).toUpperCase()));
 
   }
 

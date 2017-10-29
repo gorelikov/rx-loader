@@ -23,7 +23,7 @@ public class LongStatisticsColoredFormatter {
   }
   public static String toString(String eventName, LongStatistics statistics) {
     return String.format(
-        "%s%-" + FIELD_WIDTH + "s%s%-" + FIELD_WIDTH+ "d%s%-" + FIELD_WIDTH + "d%s%-" + FIELD_WIDTH +"f%s%-" + FIELD_WIDTH + "f%s",
+        "%s%-" + FIELD_WIDTH + "s%s%-" + FIELD_WIDTH+ "d%s%-" + FIELD_WIDTH + "d%s%-" + FIELD_WIDTH +"s%s%-" + FIELD_WIDTH + "s%s",
         ColoredLogger.BLUE_BOLD,
         eventName,
         ColoredLogger.YELLOW_BOLD,
@@ -31,9 +31,9 @@ public class LongStatisticsColoredFormatter {
         ColoredLogger.BLUE_BOLD,
         statistics.getMax() == Long.MIN_VALUE ? 0 : statistics.getMax(),
         ColoredLogger.YELLOW_BOLD,
-        statistics.getAverage(),
+        String.format("%.2f", statistics.getAverage()),
         ColoredLogger.BLUE_BOLD,
-        statistics.getStandardDeviation(),
+        String.format("%.2f", statistics.getStandardDeviation()),
         ColoredLogger.RESET
     );
   }

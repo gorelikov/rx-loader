@@ -1,10 +1,10 @@
 buildscript {
-  repositories {
-    jcenter()
-  }
-  dependencies {
-    classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.1'
-  }
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.1'
+    }
 }
 
 apply plugin: 'com.github.johnrengelman.shadow'
@@ -16,24 +16,24 @@ group = 'org.some.thing.rx.loader'
 sourceCompatibility = 1.8
 
 repositories {
-  mavenLocal()
-  jcenter()
-  mavenCentral()
+    mavenLocal()
+    jcenter()
+    mavenCentral()
 }
 
 jar {
-  manifest {
-    attributes 'Main-Class': 'org.some.thing.rx.loader.LoaderApplication'
-  }
+    manifest {
+        attributes 'Main-Class': 'org.some.thing.rx.loader.LoaderApplication'
+    }
 }
 
 shadowJar {
-  classifier = null
+    classifier = null
 }
 
 dependencies {
-  compile 'io.reactivex:rxnetty-http:0.5.2'
-  compile 'net.sf.jopt-simple:jopt-simple:5.0.4'
-  compileOnly 'org.projectlombok:lombok:1.16.18'
+    compile 'io.reactivex:rxnetty-http:0.5.2'
+    compile 'net.sf.jopt-simple:jopt-simple:5.0.4'
+    compileOnly 'org.projectlombok:lombok:1.16.18'
 }
 tasks.build.finalizedBy shadowJar

@@ -65,9 +65,9 @@ public class ResultProcessor {
         ColoredLogger.log(LongStatisticsColoredFormatter.toString("Event count", eventStat));
         ColoredLogger.log(ColoredLogger.GREEN_BOLD, "Total requests sent: " + result.size());
         ColoredLogger.log(ColoredLogger.GREEN_BOLD, "Total requests finished: " + answerStat.getCount());
-        ColoredLogger.log(ColoredLogger.GREEN_BOLD, "Requests per second:\t" + (double)answerStat.getCount() / seconds);
+        ColoredLogger.log(ColoredLogger.GREEN_BOLD, "Requests per second:\t" + (double) answerStat.getCount() / seconds);
         ColoredLogger.log(ColoredLogger.RED_UNDERLINED, "Total errors: " + errors);
-        if(debugOutput) {
+        if (debugOutput) {
             result.values().stream().filter(res -> res.isFailed()).forEach(res -> System.out.println(res.getException()));
         }
     }

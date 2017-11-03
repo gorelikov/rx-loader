@@ -12,7 +12,6 @@ import rx.Observable;
 import rx.Scheduler;
 import rx.schedulers.Schedulers;
 
-import java.nio.charset.Charset;
 import java.time.Duration;
 import java.util.List;
 import java.util.LongSummaryStatistics;
@@ -25,13 +24,13 @@ import java.util.stream.Collectors;
 public class Loader {
   private final HttpClientRequest<ByteBuf, ByteBuf> clientObs;
   private final String address;
-  private final boolean debugEnabled;
   private final boolean sse;
+  private final ResultProcessor resultProcessor;
 
   public Loader(String address, boolean ignoreSSl, Map<String,String> headers, boolean debugEnabled, boolean sse) {
-    this.clientObs = ClientBuilder.createClient(address, ignoreSSl, headers);
+    this.clientObs = ClientFactory.create(address, ignoreSSl, headers);
     this.address = address;
-    this.debugEnabled = debugEnabled;
+    this.resultProcessor = new ResultProcessor(debugEnabled);
     this.sse = sse;
   }
 
@@ -63,7 +62,7 @@ public class Loader {
     timingEventObservable.toList()
         .map(this::aggregate)
         .toBlocking()
-        .subscribe(res -> processResult(res, duration.getSeconds()));
+        .subscribe(res -> resultProcessor.processResult(res, duration.getSeconds()));
   }
 
   private Observable<TimingEvent> measureEvents(HttpClientRequest<ByteBuf, ByteBuf> clientObs, Scheduler scheduler, Integer id) {
@@ -97,64 +96,5 @@ public class Loader {
                 Timing::combine
             ))
         );
-  }
-
-  private void processResult(Map<Integer, Timing> result, long seconds) {
-    LongStatistics firstAnswerStat = result.values().stream()
-        .filter(res -> !res.isFailed() && res.isMeasured())
-        .map(Timing::getTimings)
-        .map(LongSummaryStatistics::getMin)
-        .collect(
-            LongStatistics::new,
-            LongStatistics::accept,
-            LongStatistics::combine
-        );
-
-    final Long errors = result.values().stream()
-        .filter(Timing::isFailed)
-        .count();
-
-      LongStatistics answerDistanceStat = result.values().stream()
-              .filter(res -> !res.isFailed() && res.isMeasured())
-              .flatMap(res -> res.getDistances().stream())
-              .filter(res -> res > 0.0d)//yeah, i know, i would think about that, but for now it just could not be real
-              .collect(
-                      LongStatistics::new,
-                      LongStatistics::accept,
-                      LongStatistics::combine
-              );
-
-    LongStatistics answerStat = result.values().stream()
-        .filter(res -> !res.isFailed() && res.isFinished() && res.isMeasured())
-        .map(Timing::getTimings)
-        .map(LongSummaryStatistics::getMax)
-        .collect(
-            LongStatistics::new,
-            LongStatistics::accept,
-            LongStatistics::combine
-        );
-
-    LongStatistics eventStat = result.values().stream()
-            .filter(res -> !res.isFailed() && res.isMeasured())
-            .map(Timing::eventCount)
-            .collect(
-                    LongStatistics::new,
-                    LongStatistics::accept,
-                    LongStatistics::combine
-            );
-
-    ColoredLogger.log(LongStatisticsColoredFormatter.header());
-    ColoredLogger.log(LongStatisticsColoredFormatter.toString("First", firstAnswerStat));
-    ColoredLogger.log(LongStatisticsColoredFormatter.toString("Distance", answerDistanceStat));
-    ColoredLogger.log(LongStatisticsColoredFormatter.toString("Total", answerStat));
-    ColoredLogger.log(ColoredLogger.GREEN_BOLD, "--------------------------------------------------------------------");
-    ColoredLogger.log(LongStatisticsColoredFormatter.toString("Event count", eventStat));
-    ColoredLogger.log(ColoredLogger.GREEN_BOLD, "Total requests sent: " + result.size());
-    ColoredLogger.log(ColoredLogger.GREEN_BOLD, "Total requests finished: " + answerStat.getCount());
-    ColoredLogger.log(ColoredLogger.GREEN_BOLD, "Requests per second:\t" + (double)answerStat.getCount() / seconds);
-    ColoredLogger.log(ColoredLogger.RED_UNDERLINED, "Total errors: " + errors);
-    if(debugEnabled) {
-      result.values().stream().filter(res -> res.isFailed()).forEach(res -> System.out.println(res.getException()));
-    }
   }
 }

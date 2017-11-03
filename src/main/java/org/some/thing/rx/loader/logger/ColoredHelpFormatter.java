@@ -6,13 +6,13 @@ import joptsimple.OptionDescriptor;
 
 import java.util.Map;
 
-public class ColloredHelpFormatter extends BuiltinHelpFormatter {
+public class ColoredHelpFormatter extends BuiltinHelpFormatter {
 
-  public ColloredHelpFormatter() {
+  public ColoredHelpFormatter() {
     super(80, 2);
   }
 
-  public ColloredHelpFormatter(int desiredOverallWidth, int desiredColumnSeparatorWidth) {
+  public ColoredHelpFormatter(int desiredOverallWidth, int desiredColumnSeparatorWidth) {
     super(desiredOverallWidth, desiredColumnSeparatorWidth);
   }
 

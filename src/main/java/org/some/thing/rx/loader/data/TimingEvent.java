@@ -1,6 +1,7 @@
 package org.some.thing.rx.loader.data;
 
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Data;
 import lombok.Getter;
 
@@ -10,10 +11,10 @@ public class TimingEvent {
   private Integer id;
   private  Long time;
   private Throwable exception;
-  @Builder.Default
+  @Default
   private boolean failed = false;
-  @Builder.Default
+  @Default
   private boolean initial = false;
-  @Builder.Default
+  @Default
   private boolean finished = false;
 }

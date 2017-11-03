@@ -10,10 +10,10 @@ import javax.net.ssl.SSLEngine;
 import java.net.URI;
 import java.util.Map;
 
-public class ClientBuilder {
+public class ClientFactory {
 
   @SneakyThrows
-  public static HttpClientRequest<ByteBuf, ByteBuf> createClient(String address, boolean ignoreSSl, Map<String,String> headers) {
+  public static HttpClientRequest<ByteBuf, ByteBuf> create(String address, boolean ignoreSSl, Map<String,String> headers) {
     final URI uri = URI.create(address.startsWith("http") ? address :  "http://"+address);
     final int port  = uri.getPort() < 0 ? 80 : uri.getPort();
 

@@ -5,12 +5,11 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 import lombok.SneakyThrows;
-import org.some.thing.rx.loader.logger.ColloredHelpFormatter;
+import org.some.thing.rx.loader.logger.ColoredHelpFormatter;
 import org.some.thing.rx.loader.logger.ColoredLogger;
 
 import java.time.Duration;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class LoaderApplication {
@@ -19,6 +18,8 @@ public class LoaderApplication {
   public static void main(String[] args) {
 
     OptionParser parser = new OptionParser();
+    parser.formatHelpWith(new ColoredHelpFormatter());
+
     final OptionSpec<String> headerSpec = parser.accepts( "H", "Headers(could be delimited by ;)" )
         .withRequiredArg().withValuesSeparatedBy(";").ofType(String.class);
     final OptionSpec<Integer> threadSpec = parser.accepts("t", "threads")
@@ -34,7 +35,6 @@ public class LoaderApplication {
     final OptionSpec sslSpec = parser.accepts("k", "ignoreSSL");
     final OptionSpec sseSpec = parser.accepts("sse", "sseEnabled");
     final OptionSpec debugSpec = parser.accepts("debugEnabled", "debugEnabled");
-    parser.formatHelpWith(new ColloredHelpFormatter());
 
     OptionSet optionSet = null;
     try {
@@ -45,9 +45,7 @@ public class LoaderApplication {
       System.exit(1);
     }
 
-    final Map<String, String> headers = optionSet.valuesOf(headerSpec).stream()
-        .map(res -> res.split(":", 2))
-        .collect(Collectors.toMap(res -> res[0], res -> res[1]));
+    final Map<String, String> headers = parseHeaders(headerSpec, optionSet);
 
     Loader loader = new Loader(optionSet.valueOf(addressSpec), optionSet.has(sslSpec),
             headers, optionSet.has(debugSpec), optionSet.has(sseSpec));
@@ -55,6 +53,12 @@ public class LoaderApplication {
     loader.run(optionSet.valueOf(threadSpec), optionSet.valueOf(connectionsSpec),
         optionSet.valueOf(maxRequestSpec), Duration.parse("PT"+optionSet.valueOf(durationSpec).toUpperCase()));
 
+  }
+
+  private static Map<String, String> parseHeaders(OptionSpec<String> headerSpec, OptionSet optionSet) {
+    return optionSet.valuesOf(headerSpec).stream()
+        .map(res -> res.split(":", 2))
+        .collect(Collectors.toMap(res -> res[0], res -> res[1]));
   }
 
 }

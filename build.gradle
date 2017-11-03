@@ -11,7 +11,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'java'
 
 
-version = '0.0.2'
+version = '0.0.3'
 group = 'org.some.thing.rx.loader'
 sourceCompatibility = 1.8
 
@@ -34,6 +34,8 @@ shadowJar {
 dependencies {
     compile 'io.reactivex:rxnetty-http:0.5.2'
     compile 'net.sf.jopt-simple:jopt-simple:5.0.4'
+    compile 'org.tinylog:tinylog:1.2'
+    compile 'org.tinylog:slf4j-binding:1.2'
     compileOnly 'org.projectlombok:lombok:1.16.18'
 }
 tasks.build.finalizedBy shadowJar

@@ -1,6 +1,7 @@
 package org.some.thing.rx.loader;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.some.thing.rx.loader.data.LongStatistics;
 import org.some.thing.rx.loader.data.Timing;
 import org.some.thing.rx.loader.logger.ColoredLogger;
@@ -9,6 +10,7 @@ import org.some.thing.rx.loader.logger.LongStatisticsColoredFormatter;
 import java.util.LongSummaryStatistics;
 import java.util.Map;
 
+@Slf4j
 @RequiredArgsConstructor
 public class ResultProcessor {
     private final boolean debugOutput;
@@ -67,8 +69,7 @@ public class ResultProcessor {
         ColoredLogger.log(ColoredLogger.GREEN_BOLD, "Total requests finished: " + answerStat.getCount());
         ColoredLogger.log(ColoredLogger.GREEN_BOLD, "Requests per second:\t" + (double) answerStat.getCount() / seconds);
         ColoredLogger.log(ColoredLogger.RED_UNDERLINED, "Total errors: " + errors);
-        if (debugOutput) {
-            result.values().stream().filter(res -> res.isFailed()).forEach(res -> System.out.println(res.getException()));
-        }
+
+        result.values().stream().filter(res -> res.isFailed()).forEach(res -> log.debug("Connection exception: ", res.getException()));
     }
 }

@@ -1,5 +1,8 @@
 package org.some.thing.rx.loader.logger;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class ColoredLogger {
     // Reset
     public static final String RESET = "\033[0m";  // Text Reset
@@ -76,30 +79,30 @@ public class ColoredLogger {
 
     //info
     public static void info(String className, String message) {
-        System.out.println(GREEN_BACKGROUND_BRIGHT + className + " : " + message + RESET);
+        log.info(GREEN_BACKGROUND_BRIGHT + className + " : " + message + RESET);
     }
 
     //error
     public static void error(String className, String message) {
-        System.out.println(RED_BACKGROUND_BRIGHT + className + " : " + message + RESET);
+        log.info(RED_BACKGROUND_BRIGHT + className + " : " + message + RESET);
     }
 
     //debug
     public static void debug(String className, String message) {
-        System.out.println(BLUE_BACKGROUND_BRIGHT + className + " : " + message + RESET);
+        log.info(BLUE_BACKGROUND_BRIGHT + className + " : " + message + RESET);
     }
 
     //warning
     public static void warn(String className, String message) {
-        System.out.println(YELLOW_BACKGROUND_BRIGHT + className + " : " + message + RESET);
+        log.info(YELLOW_BACKGROUND_BRIGHT + className + " : " + message + RESET);
     }
 
     public static void log(String color, String message) {
-        System.out.println(color + message + RESET);
+        log.info(color + message + RESET);
     }
 
     public static void log(String message) {
-        System.out.println(message + RESET);
+        log.info(message + RESET);
     }
 
 }

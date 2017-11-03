@@ -5,6 +5,9 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.pmw.tinylog.Configurator;
+import org.pmw.tinylog.Level;
 import org.some.thing.rx.loader.logger.ColoredHelpFormatter;
 import org.some.thing.rx.loader.logger.ColoredLogger;
 
@@ -12,10 +15,14 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class LoaderApplication {
 
     @SneakyThrows
     public static void main(String[] args) {
+        Configurator.defaultConfig()
+                .formatPattern("{message}")
+                .activate();
 
         OptionParser parser = new OptionParser();
         parser.formatHelpWith(new ColoredHelpFormatter());
@@ -23,13 +30,13 @@ public class LoaderApplication {
         final OptionSpec<String> headerSpec = parser.accepts("H", "Headers(could be delimited by ;)")
                 .withRequiredArg().withValuesSeparatedBy(";").ofType(String.class);
         final OptionSpec<Integer> threadSpec = parser.accepts("t", "threads")
-                .withRequiredArg().ofType(Integer.class);
+                .withRequiredArg().required().ofType(Integer.class);
         final OptionSpec<Integer> connectionsSpec = parser.accepts("c", "connections")
                 .withRequiredArg().ofType(Integer.class).defaultsTo(Integer.MAX_VALUE);
         final OptionSpec<Integer> maxRequestSpec = parser.accepts("r", "maxRequests")
                 .withRequiredArg().ofType(Integer.class).defaultsTo(Integer.MAX_VALUE);
         final OptionSpec<String> addressSpec = parser.accepts("url", "requestURL")
-                .withRequiredArg().ofType(String.class);
+                .withRequiredArg().required().ofType(String.class);
         final OptionSpec<String> durationSpec = parser.accepts("duration", "duration")
                 .requiredUnless("r").withRequiredArg().ofType(String.class);
         final OptionSpec sslSpec = parser.accepts("k", "ignoreSSL");
@@ -44,6 +51,10 @@ public class LoaderApplication {
             parser.printHelpOn(System.out);
             System.exit(1);
         }
+
+        Configurator.currentConfig()
+                .level(optionSet.has(debugSpec) ? Level.DEBUG : Level.INFO)
+                .activate();
 
         final Map<String, String> headers = parseHeaders(headerSpec, optionSet);
 
